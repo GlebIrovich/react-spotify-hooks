@@ -14,7 +14,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "react-spotify-hooks": ["libs/react-spotify-hooks/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

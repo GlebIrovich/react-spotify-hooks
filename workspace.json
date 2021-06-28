@@ -99,6 +99,48 @@
           }
         }
       }
+    },
+    "react-spotify-hooks": {
+      "root": "libs/react-spotify-hooks",
+      "sourceRoot": "libs/react-spotify-hooks/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/react-spotify-hooks",
+            "tsConfig": "libs/react-spotify-hooks/tsconfig.lib.json",
+            "project": "libs/react-spotify-hooks/package.json",
+            "entryFile": "libs/react-spotify-hooks/src/index.ts",
+            "external": ["react/jsx-runtime"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/react-spotify-hooks/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/react-spotify-hooks/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/react-spotify-hooks"],
+          "options": {
+            "jestConfig": "libs/react-spotify-hooks/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
