@@ -1,4 +1,10 @@
-import React, { FC, useContext, useReducer } from "react";
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 export interface SpotifyConfigs {
   clientId: string;
@@ -8,7 +14,7 @@ export interface SpotifyConfigs {
 
 interface TokenData {
   token: string;
-  validUntil: Date;
+  validUntil?: Date;
 }
 
 type Action = { type: "set-token"; payload: TokenData };
@@ -43,10 +49,37 @@ function stateReducer(
 
 interface Props {
   configs: SpotifyConfigs;
+  tokenAutoDetect?: boolean;
 }
 
-export const SpotifyContextProvider: FC<Props> = ({ children, configs }) => {
+export const SpotifyContextProvider: FC<Props> = ({
+  children,
+  configs,
+  tokenAutoDetect = true,
+}) => {
   const [state, dispatch] = useReducer(stateReducer, { configs });
+
+  useEffect(() => {
+    if (!tokenAutoDetect) {
+      return;
+    }
+    const currentParams = new URLSearchParams(
+      window.location.hash.replace("#", "")
+    );
+
+    const token = currentParams.get("access_token");
+    const expiresIn = currentParams.get("expires_in");
+    if (token && expiresIn) {
+      dispatch({
+        type: "set-token",
+        payload: {
+          token,
+          validUntil: new Date(Date.now() + parseInt(expiresIn, 10) * 1000),
+        },
+      });
+      window.history.replaceState(null, "", "");
+    }
+  }, []);
 
   return (
     <SpotifyStateContext.Provider value={state}>
@@ -79,4 +112,14 @@ export function useSpotifyDispatch() {
   }
 
   return context;
+}
+
+export function useSetSpotifyToken() {
+  const dispatch = useSpotifyDispatch();
+
+  return useCallback(
+    (tokenData: TokenData) =>
+      dispatch({ type: "set-token", payload: tokenData }),
+    [dispatch]
+  );
 }
