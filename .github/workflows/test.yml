@@ -16,4 +16,4 @@ jobs:
         with:
           node-version: '14.x'
       - run: npm ci
-      - run: yarn nx test react-spotify-hooks
+      - run: yarn nx test react-spotify-hooks --ci
