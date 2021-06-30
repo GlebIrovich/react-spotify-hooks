@@ -2,9 +2,9 @@ name: Test library
 
 on:
   pull_request:
-    branches: [master]
+    branches: [ master ]
   push:
-    branches: [master]
+    branches: [ master ]
 
 jobs:
   build:
@@ -16,4 +16,4 @@ jobs:
         with:
           node-version: '14.x'
       - run: npm ci
-      - run: yarn nx test react-spotify-hooks --ci
+      - run: yarn nx test use-spotify-api --ci

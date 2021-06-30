@@ -1,9 +1,9 @@
 module.exports = {
-  displayName: "react-spotify-hooks",
+  displayName: "use-spotify-api",
   preset: "../../jest.preset.js",
   transform: {
     "^.+\\.[tj]sx?$": "babel-jest",
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
-  coverageDirectory: "../../coverage/libs/react-spotify-hooks",
+  coverageDirectory: "../../coverage/libs/use-spotify-api",
 };

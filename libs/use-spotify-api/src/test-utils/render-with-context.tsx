@@ -1,5 +1,5 @@
 import { ComponentProps, ReactNode } from "react";
-import { SpotifyContextProvider } from "react-spotify-hooks";
+import { SpotifyContextProvider } from "use-spotify-api";
 import { render } from "@testing-library/react";
 import { SpotifyConfigs } from "../lib/context/spotify.context";
 

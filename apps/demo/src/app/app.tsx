@@ -2,7 +2,7 @@ import {
   SpotifyContextProvider,
   useSpotifyAuthorization,
   useSpotifyState,
-} from "react-spotify-hooks";
+} from "use-spotify-api";
 
 function App() {
   const { tokenData } = useSpotifyState();

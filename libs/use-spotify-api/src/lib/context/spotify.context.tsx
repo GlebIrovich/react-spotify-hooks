@@ -19,6 +19,7 @@ interface TokenData {
 
 type Action = { type: "set-token"; payload: TokenData };
 type Dispatch = (action: Action) => void;
+
 interface SpotifyContextState {
   tokenData?: TokenData;
   configs: SpotifyConfigs;

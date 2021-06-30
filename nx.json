@@ -1,5 +1,5 @@
 {
-  "npmScope": "react-spotify-hooks",
+  "npmScope": "use-spotify-api",
   "affected": {
     "defaultBase": "master"
   },
@@ -14,7 +14,12 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ]
       }
     }
   },
@@ -32,9 +37,11 @@
     },
     "demo-e2e": {
       "tags": [],
-      "implicitDependencies": ["demo"]
+      "implicitDependencies": [
+        "demo"
+      ]
     },
-    "react-spotify-hooks": {
+    "use-spotify-api": {
       "tags": []
     }
   }

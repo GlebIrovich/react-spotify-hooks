@@ -1,4 +1,4 @@
-import { useSpotifyAuthorization } from "react-spotify-hooks";
+import { useSpotifyAuthorization } from "use-spotify-api";
 import { renderWithContext } from "../../test-utils/render-with-context";
 import { screen } from "@testing-library/react";
 

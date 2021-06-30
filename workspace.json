@@ -8,14 +8,19 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/demo",
             "index": "apps/demo/src/index.html",
             "main": "apps/demo/src/main.tsx",
             "polyfills": "apps/demo/src/polyfills.ts",
             "tsConfig": "apps/demo/tsconfig.app.json",
-            "assets": ["apps/demo/src/favicon.ico", "apps/demo/src/assets"],
+            "assets": [
+              "apps/demo/src/favicon.ico",
+              "apps/demo/src/assets"
+            ],
             "styles": [],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -61,12 +66,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/demo/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "apps/demo/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/demo"],
+          "outputs": [
+            "coverage/apps/demo"
+          ],
           "options": {
             "jestConfig": "apps/demo/jest.config.js",
             "passWithNoTests": true
@@ -95,29 +104,35 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/demo-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/demo-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
     },
-    "react-spotify-hooks": {
-      "root": "libs/react-spotify-hooks",
-      "sourceRoot": "libs/react-spotify-hooks/src",
+    "use-spotify-api": {
+      "root": "libs/use-spotify-api",
+      "sourceRoot": "libs/use-spotify-api/src",
       "projectType": "library",
       "targets": {
         "build": {
           "executor": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
-            "outputPath": "dist/libs/react-spotify-hooks",
-            "tsConfig": "libs/react-spotify-hooks/tsconfig.lib.json",
-            "project": "libs/react-spotify-hooks/package.json",
-            "entryFile": "libs/react-spotify-hooks/src/index.ts",
-            "external": ["react/jsx-runtime"],
+            "outputPath": "dist/libs/use-spotify-api",
+            "tsConfig": "libs/use-spotify-api/tsconfig.lib.json",
+            "project": "libs/use-spotify-api/package.json",
+            "entryFile": "libs/use-spotify-api/src/index.ts",
+            "external": [
+              "react/jsx-runtime"
+            ],
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
             "assets": [
               {
-                "glob": "libs/react-spotify-hooks/README.md",
+                "glob": "libs/use-spotify-api/README.md",
                 "input": ".",
                 "output": "."
               }
@@ -128,15 +143,17 @@
           "executor": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
-              "libs/react-spotify-hooks/**/*.{ts,tsx,js,jsx}"
+              "libs/use-spotify-api/**/*.{ts,tsx,js,jsx}"
             ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/react-spotify-hooks"],
+          "outputs": [
+            "coverage/libs/use-spotify-api"
+          ],
           "options": {
-            "jestConfig": "libs/react-spotify-hooks/jest.config.js",
+            "jestConfig": "libs/use-spotify-api/jest.config.js",
             "passWithNoTests": true
           }
         }
