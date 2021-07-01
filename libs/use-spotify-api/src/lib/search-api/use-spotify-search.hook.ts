@@ -1,23 +1,23 @@
 import { SPOTIFY_API_BASE } from "../../constants";
 import { useSpotifyState } from "../context/spotify.context";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiHookReturnType, SpotifyResponse } from "../../types";
 import { apiGetRequest } from "../helpers/spotify.api";
 
 export interface SearchApiProps {
   query: string;
-  type: "album" | "artist" | "playlist" | "track" | "show" | "episode";
+  types: ("album" | "artist" | "playlist" | "track" | "show" | "episode")[];
   market?: "from_token" | string;
   limit?: number;
   offset?: number;
   includeExternal?: boolean;
 }
 
-export function useSpotifySearch<Data = any>(
+export function useSpotifySearch<Data = unknown>(
   props: SearchApiProps
 ): ApiHookReturnType<Data> {
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<SpotifyResponse<Data>>({
+  const response = useRef<SpotifyResponse<Data>>({
     content: null,
     error: null,
   });
@@ -32,19 +32,19 @@ export function useSpotifySearch<Data = any>(
     }
     setLoading(true);
     apiGetRequest<Data>(url, token)
-      .then(setResponse)
+      .then((apiResponse) => (response.current = apiResponse))
       .finally(() => setLoading(false));
   }, [token, url]);
 
-  return { ...response, loading };
+  return { ...response.current, loading };
 }
 
-export function useLazySpotifySearch<Data = any>(): [
+export function useLazySpotifySearch<Data = unknown>(): [
   (props: SearchApiProps) => void,
   ApiHookReturnType<Data>
 ] {
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<SpotifyResponse<Data>>({
+  const response = useRef<SpotifyResponse<Data>>({
     content: null,
     error: null,
   });
@@ -61,19 +61,19 @@ export function useLazySpotifySearch<Data = any>(): [
       const url = propsToUrl(props);
       setLoading(true);
       apiGetRequest<Data>(url, token)
-        .then(setResponse)
+        .then((apiResponse) => (response.current = apiResponse))
         .finally(() => setLoading(false));
     },
     [token]
   );
 
-  return [lazyRequest, { ...response, loading }];
+  return [lazyRequest, { ...response.current, loading }];
 }
 
 function propsToUrl(props: SearchApiProps): string {
   let url = `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(
     props.query
-  )}&type=${props.type}`;
+  )}&type=${props.types.join(",")}`;
   if (props.market) {
     url += `&market=${props.market}`;
   }
