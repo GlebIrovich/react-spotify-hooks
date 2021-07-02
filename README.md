@@ -1,96 +1,104 @@
-# ReactSpotifyHooks
+# Use Spotify API
 
-This project was generated using [Nx](https://nx.dev).
+#### React Hooks for using Spotify API
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+### Supported APIs
+-[x] Getting access token using [Implicit Grant Flow](https://developer.spotify.com/documentation/general/guides/authorization-guide/#implicit-grant-flow)
+-[x] [Search API](./libs/use-spotify-api/src/lib/search-api/README.md)
+-[ ] Browse API
+-[ ] Follow API
+-[ ] Playlist API
+-[ ] Library API
+-[ ] Artist API
+-[ ] Markets API
+-[ ] Personalization API
+-[ ] User Profile API
+-[ ] Albums API
+-[ ] Tracks API
+-[ ] Episodes API
+-[ ] Shows API
 
-🔎 **Smart, Extensible Build Framework**
 
-## Adding capabilities to your workspace
+### Quick Start Guide
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+#### 1. Install
+`npm install use-spotify-api`
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects
-as well.
+#### 2. Create Developer Account
+[Set up your Spotify app](https://developer.spotify.com/documentation/general/guides/app-settings/) to obtain `clientId` and provide `redirectUri`
 
-Below are our core plugins:
+#### 3. Wrap your app with `SpotifyContextProvider`
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+`use-spotify-api` helps to abstract authentication logic by using React Context API.
 
-There are also many [community plugins](https://nx.dev/community) you could add.
+```tsx
+ReactDOM.render(
+  <SpotifyContextProvider
+    configs={{
+      clientId: YOU_CLIENT_ID,
+      redirectUri: REDIRECT_URL,
+    }}
+  >
+    <App />
+  </SpotifyContextProvider>,
+  document.getElementById('root')
+);
+```
 
-## Generate an application
+#### 4. Use `useSpotifyAuthorization` hook to generate auth url.
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+```tsx
+function App() {
+  const authUrl = useSpotifyAuthorization();
 
-> You can use any of the plugins above to generate applications as well.
+  return (
+    <main>
+      <a href={authUrl}>Authorize</a>
+    </main>
+  );
+}
+```
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+Once user gives your app, she will be redirected to the url which you specified as `redirectUrl`.
+`SpotifyContextProvider` will extract token from the url and remove the hash from the location href.
 
-## Generate a library
+### Accessing `SpotifyContextProvider`'s state
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+In some case you might need to get access to you token. You can use `useSpotifyState` hook to
+retrieve information from the context.
 
-> You can also use any of the plugins above to generate libraries as well.
+```tsx
+function App() {
+  const authUrl = useSpotifyAuthorization();
+  const { tokenData } = useSpotifyState();
 
-Libraries are shareable across libraries and applications. They can be imported from `@use-spotify-api/mylib`.
+  return (
+    <main>
+      <a href={authUrl}>Authorize</a>
+      <p>{JSON.stringify(tokenData)}</p>
+    </main>
+  );
+}
+```
 
-## Development server
+### Opting out from token auto-detection
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you
-change any of the source files.
+If you use a different authorization flow, you might need to provide token to the context yourself.
+This is very simple. Use `useSetSpotifyToken` hook to update context state.
 
-## Code scaffolding
+```tsx
+function App({token}: {token: string}) {
+  const { tokenData } = useSpotifyState();
+  const setToken = useSetSpotifyToken();
+  
+  useEffect(() => {
+    setToken({token})
+  },[token, setToken])
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
-
-## Build
-
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use
-the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev) to learn more.
-
-## ☁ Nx Cloud
-
-### Distributed Computation Caching & Distributed Task Execution
-
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
-
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that
-are new to Nx can connect to Nx Cloud and start saving time instantly.
-
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s
-advanced code generation and project dependency graph, plus a unified experience for both frontend and backend
-developers.
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
+  return (
+    <main>
+      <p>{JSON.stringify(tokenData)}</p>
+    </main>
+  );
+}
+```

@@ -1,7 +1,9 @@
 import { ComponentProps, ReactNode } from "react";
-import { SpotifyContextProvider } from "use-spotify-api";
 import { render } from "@testing-library/react";
-import { SpotifyConfigs } from "../lib/context/spotify.context";
+import {
+  SpotifyConfigs,
+  SpotifyContextProvider,
+} from "../lib/context/spotify.context";
 
 const spotifyConfigMock: SpotifyConfigs = {
   clientId: "CLIENT_ID",

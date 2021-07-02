@@ -1,7 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import { SpotifyContextProvider, useSpotifyState } from "use-spotify-api";
 import { useEffect } from "react";
-import { useSetSpotifyToken, useSpotifyDispatch } from "./spotify.context";
+import {
+  useSetSpotifyToken,
+  useSpotifyDispatch,
+  useSpotifyState,
+} from "./spotify.context";
 import { renderWithContext } from "../../test-utils/render-with-context";
 
 const StateConsumer = () => {

@@ -1,10 +1,10 @@
 import { SPOTIFY_API_BASE } from "../../constants";
 import { useSpotifyState } from "../context/spotify.context";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ApiHookReturnType, SpotifyResponse } from "../../types";
 import { apiGetRequest } from "../helpers/spotify.api";
 
-export interface SearchApiProps {
+export interface SearchApiParams {
   query: string;
   types: ("album" | "artist" | "playlist" | "track" | "show" | "episode")[];
   market?: "from_token" | string;
@@ -13,34 +13,8 @@ export interface SearchApiProps {
   includeExternal?: boolean;
 }
 
-export function useSpotifySearch<Data = unknown>(
-  props: SearchApiProps
-): ApiHookReturnType<Data> {
-  const [loading, setLoading] = useState(false);
-  const response = useRef<SpotifyResponse<Data>>({
-    content: null,
-    error: null,
-  });
-  const { tokenData } = useSpotifyState();
-  const token = tokenData?.token || null;
-  const url = propsToUrl(props);
-
-  useEffect(() => {
-    if (!token) {
-      console.warn("useSpotifySearch: Spotify token is missing");
-      return;
-    }
-    setLoading(true);
-    apiGetRequest<Data>(url, token)
-      .then((apiResponse) => (response.current = apiResponse))
-      .finally(() => setLoading(false));
-  }, [token, url]);
-
-  return { ...response.current, loading };
-}
-
-export function useLazySpotifySearch<Data = unknown>(): [
-  (props: SearchApiProps) => void,
+export function useSpotifySearch<Data = unknown>(): [
+  (props: SearchApiParams) => void,
   ApiHookReturnType<Data>
 ] {
   const [loading, setLoading] = useState(false);
@@ -52,9 +26,9 @@ export function useLazySpotifySearch<Data = unknown>(): [
   const token = tokenData?.token || null;
 
   const lazyRequest = useCallback(
-    (props: SearchApiProps) => {
+    (props: SearchApiParams) => {
       if (!token) {
-        console.warn("useLazySpotifySearch: Spotify token is missing");
+        console.warn("useSpotifySearch: Spotify token is missing");
         return;
       }
 
@@ -70,7 +44,7 @@ export function useLazySpotifySearch<Data = unknown>(): [
   return [lazyRequest, { ...response.current, loading }];
 }
 
-function propsToUrl(props: SearchApiProps): string {
+function propsToUrl(props: SearchApiParams): string {
   let url = `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(
     props.query
   )}&type=${props.types.join(",")}`;
