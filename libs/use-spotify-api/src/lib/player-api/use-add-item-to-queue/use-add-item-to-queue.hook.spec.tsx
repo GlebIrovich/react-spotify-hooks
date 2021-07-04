@@ -1,18 +1,20 @@
-import { SearchApiParams, useSpotifySearch } from "./use-spotify-search.hook";
-import TestComponent from "../../test-utils/test-component";
 import {
-  mockSuccessfulApiGetRequest,
+  AddItemToQueueParams,
+  useAddItemToQueue,
+} from "./use-add-item-to-queue.hook";
+import TestComponent from "../../../test-utils/test-component";
+import {
+  mockSuccessfulApiPostRequest,
   mockUseSpotifyState,
-} from "../../test-utils/spy";
+} from "../../../test-utils/spy";
 import { render } from "@testing-library/react";
 
-const configs: SearchApiParams = {
-  types: ["album"],
-  query: "QUERY",
+const configs: AddItemToQueueParams = {
+  uri: "URI",
 };
 
-const Component = ({ configs }: { configs: SearchApiParams }) => {
-  const [request, data] = useSpotifySearch<any>();
+const Component = ({ configs }: { configs: AddItemToQueueParams }) => {
+  const [request, data] = useAddItemToQueue<any>();
 
   return <TestComponent request={() => request(configs)} data={data} />;
 };
@@ -27,24 +29,17 @@ describe("useSpotifySearch", () => {
   it("should return results if request was successful", async () => {
     const token = "MY_TOKEN";
     mockUseSpotifyState({ tokenData: { token } } as any);
-    const fetchMock = mockSuccessfulApiGetRequest({
+
+    const fetchMock = mockSuccessfulApiPostRequest({
       content: { data: "DATA" },
       error: null,
     });
     const { container, findByTestId } = render(
-      <Component
-        configs={{
-          ...configs,
-          market: "from_token",
-          includeExternal: true,
-          limit: 10,
-          offset: 10,
-        }}
-      />
+      <Component configs={{ ...configs, device: "123" }} />
     );
 
     const expectedUrl =
-      "https://api.spotify.com/v1/search?q=QUERY&type=album&market=from_token&limit=10&offset=10&include_external=true";
+      "https://api.spotify.com/v1/me/player/queue?uri=URI&device=123";
     expect(fetchMock).toBeCalledWith(expectedUrl, token);
     await findByTestId("content");
 
