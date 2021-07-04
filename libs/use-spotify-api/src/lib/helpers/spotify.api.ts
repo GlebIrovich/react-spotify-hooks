@@ -11,6 +11,10 @@ export async function apiGetRequest<Data>(
       },
     });
 
+    if (response.status === 204) {
+      return { error: null, content: null };
+    }
+
     const content = await response.json();
     if (!response.ok) {
       return { error: content?.error || content, content: null };

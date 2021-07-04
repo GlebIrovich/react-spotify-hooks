@@ -5,3 +5,4 @@ export {
   SpotifyContextProvider,
   useSpotifyState,
 } from "./lib/context/spotify.context";
+export { ApiHookReturnType } from "./types";
