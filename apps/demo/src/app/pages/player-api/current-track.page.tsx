@@ -1,6 +1,6 @@
 import React from "react";
 import { useCurrentTrack } from "use-spotify-api";
-import PageContentComponent from "../components/page-content.component";
+import PageContentComponent from "../../components/page-content.component";
 
 const CurrentTrackPage = () => {
   const [request, data] = useCurrentTrack();
