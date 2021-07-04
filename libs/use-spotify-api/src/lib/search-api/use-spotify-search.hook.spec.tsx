@@ -19,7 +19,6 @@ const Component = ({ configs }: { configs: SearchApiParams }) => {
 
 describe("useSpotifySearch", () => {
   it("should do nothing if token is not provided", () => {
-    jest.spyOn(console, "warn").mockReturnValue();
     mockUseSpotifyState({ tokenData: undefined } as any);
     const { container } = render(<Component configs={configs} />);
     expect(container).toMatchInlineSnapshot(`<div />`);

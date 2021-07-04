@@ -15,3 +15,9 @@ export function mockSuccessfulApiGetRequest(resolveValue: SpotifyResponse) {
     .spyOn(apiHelpers, "apiGetRequest")
     .mockResolvedValue(resolveValue);
 }
+
+export function mockSuccessfulApiPostRequest(resolveValue: SpotifyResponse) {
+  return jest
+    .spyOn(apiHelpers, "apiPostRequest")
+    .mockResolvedValue(resolveValue);
+}

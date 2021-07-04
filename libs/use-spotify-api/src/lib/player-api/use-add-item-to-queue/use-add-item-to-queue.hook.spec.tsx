@@ -1,48 +1,45 @@
-import { CurrentTrackParams, useCurrentTrack } from "./use-current-track.hook";
-import { render } from "@testing-library/react";
+import {
+  AddItemToQueueParams,
+  useAddItemToQueue,
+} from "./use-add-item-to-queue.hook";
 import TestComponent from "../../../test-utils/test-component";
 import {
-  mockSuccessfulApiGetRequest,
+  mockSuccessfulApiPostRequest,
   mockUseSpotifyState,
 } from "../../../test-utils/spy";
+import { render } from "@testing-library/react";
 
-const configs: CurrentTrackParams = {};
+const configs: AddItemToQueueParams = {
+  uri: "URI",
+};
 
-const Component = ({ configs }: { configs: CurrentTrackParams }) => {
-  const [request, data] = useCurrentTrack<any>();
+const Component = ({ configs }: { configs: AddItemToQueueParams }) => {
+  const [request, data] = useAddItemToQueue<any>();
+
   return <TestComponent request={() => request(configs)} data={data} />;
 };
 
-describe("useCurrentTrack", () => {
+describe("useSpotifySearch", () => {
   it("should do nothing if token is not provided", () => {
     mockUseSpotifyState({ tokenData: undefined } as any);
-
     const { container } = render(<Component configs={configs} />);
     expect(container).toMatchInlineSnapshot(`<div />`);
   });
 
   it("should return results if request was successful", async () => {
     const token = "MY_TOKEN";
-
     mockUseSpotifyState({ tokenData: { token } } as any);
-    const fetchMock = mockSuccessfulApiGetRequest({
+
+    const fetchMock = mockSuccessfulApiPostRequest({
       content: { data: "DATA" },
       error: null,
     });
-
     const { container, findByTestId } = render(
-      <Component
-        configs={{
-          ...configs,
-          market: "from_token",
-          additionalTypes: ["track", "episode"],
-        }}
-      />
+      <Component configs={{ ...configs, device: "123" }} />
     );
 
     const expectedUrl =
-      "https://api.spotify.com/v1/me/player/currently-playing?market=from_token&additional_types=track,episode";
-
+      "https://api.spotify.com/v1/me/player/queue?uri=URI&device=123";
     expect(fetchMock).toBeCalledWith(expectedUrl, token);
     await findByTestId("content");
 
