@@ -1,12 +1,11 @@
 import { useCallback, useRef, useState } from "react";
 import { ApiHookReturnType, SpotifyResponse } from "../../types";
-import { apiGetRequest, apiPostRequest } from "./spotify.api";
+import { apiGetRequest, apiPostRequest, apiPutRequest } from "./spotify.api";
 import { useSpotifyState } from "../context/spotify.context";
 
 export function useSpotifyApiBase<Data = unknown>(
-  method: "GET" | "POST",
-  body?: any
-): [(url: string) => void, ApiHookReturnType] {
+  method: "GET" | "POST" | "PUT"
+): [(url: string, body?: any) => void, ApiHookReturnType] {
   const [loading, setLoading] = useState(false);
   const response = useRef<SpotifyResponse<Data>>({
     content: null,
@@ -16,7 +15,7 @@ export function useSpotifyApiBase<Data = unknown>(
   const token = tokenData?.token || null;
 
   const lazyRequest = useCallback(
-    (url: string) => {
+    (url: string, body?: any) => {
       if (!token) {
         console.warn("Spotify token is missing");
         return;
@@ -27,13 +26,17 @@ export function useSpotifyApiBase<Data = unknown>(
         apiGetRequest<Data>(url, token)
           .then((apiResponse) => (response.current = apiResponse))
           .finally(() => setLoading(false));
-      } else {
+      } else if (method === "POST") {
         apiPostRequest<Data>(url, token, body)
+          .then((apiResponse) => (response.current = apiResponse))
+          .finally(() => setLoading(false));
+      } else {
+        apiPutRequest<Data>(url, token, body)
           .then((apiResponse) => (response.current = apiResponse))
           .finally(() => setLoading(false));
       }
     },
-    [token, method, body]
+    [token, method]
   );
 
   return [lazyRequest, { ...response.current, loading }];

@@ -1,4 +1,4 @@
-import { ApiHookReturnType, CurrentTrackParams } from "use-spotify-api";
+import { ApiHookReturnType } from "../../../types";
 import { useSpotifyApiBase } from "../../helpers/use-spotify-api-base.hook";
 import { useCallback } from "react";
 import { SPOTIFY_API_BASE } from "../../../constants";
@@ -21,7 +21,7 @@ export function useInformationAboutPlayback<Data = unknown>(): [
   return [request, state];
 }
 
-function propsToUrl(props: CurrentTrackParams): string {
+function propsToUrl(props: InformationAboutPlaybackParams): string {
   let url = `${SPOTIFY_API_BASE}/me/player`;
 
   url += `?market=${props.market || "from_token"}`;

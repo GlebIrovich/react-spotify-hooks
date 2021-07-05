@@ -5,7 +5,7 @@ import {
   mockSuccessfulApiPostRequest,
   mockUseSpotifyState,
 } from "../../test-utils/spy";
-import { useSpotifyApiBase } from "../helpers/use-spotify-api-base.hook";
+import { useSpotifyApiBase } from "./use-spotify-api-base.hook";
 
 interface TestComponentProps {
   url: string;
@@ -14,8 +14,8 @@ interface TestComponentProps {
 }
 
 const Component = ({ url, body, method }: TestComponentProps) => {
-  const [request, data] = useSpotifyApiBase<any>(method, body);
-  return <TestComponent request={() => request(url)} data={data} />;
+  const [request, data] = useSpotifyApiBase<any>(method);
+  return <TestComponent request={() => request(url, body)} data={data} />;
 };
 
 describe("useCurrentTrack", () => {

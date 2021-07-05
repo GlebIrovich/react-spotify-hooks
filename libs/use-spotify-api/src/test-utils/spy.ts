@@ -1,7 +1,6 @@
 import * as context from "../lib/context/spotify.context";
 import { useSpotifyState } from "../lib/context/spotify.context";
 import * as apiHelpers from "../lib/helpers/spotify.api";
-import { apiGetRequest } from "../lib/helpers/spotify.api";
 import { SpotifyResponse } from "../types";
 
 export function mockUseSpotifyState(
@@ -19,5 +18,11 @@ export function mockSuccessfulApiGetRequest(resolveValue: SpotifyResponse) {
 export function mockSuccessfulApiPostRequest(resolveValue: SpotifyResponse) {
   return jest
     .spyOn(apiHelpers, "apiPostRequest")
+    .mockResolvedValue(resolveValue);
+}
+
+export function mockSuccessfulApiPutRequest(resolveValue: SpotifyResponse) {
+  return jest
+    .spyOn(apiHelpers, "apiPutRequest")
     .mockResolvedValue(resolveValue);
 }

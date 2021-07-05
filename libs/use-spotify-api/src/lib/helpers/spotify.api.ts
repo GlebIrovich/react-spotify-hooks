@@ -29,6 +29,22 @@ export async function apiPostRequest<Data>(
   );
 }
 
+export async function apiPutRequest<Data>(
+  url: string,
+  token: string,
+  body?: any
+): Promise<SpotifyResponse<Data>> {
+  return handleRequest<Data>(() =>
+    fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    })
+  );
+}
+
 async function handleRequest<Data>(
   request: () => Promise<Response>
 ): Promise<SpotifyResponse<Data>> {
