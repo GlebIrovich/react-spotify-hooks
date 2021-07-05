@@ -1,8 +1,7 @@
 import { SPOTIFY_API_BASE } from "../../constants";
-import { useSpotifyState } from "../context/spotify.context";
-import { useCallback, useRef, useState } from "react";
-import { ApiHookReturnType, SpotifyResponse } from "../../types";
-import { apiGetRequest } from "../helpers/spotify.api";
+import { useCallback } from "react";
+import { ApiHookReturnType } from "../../types";
+import { useSpotifyApiBase } from "../helpers/use-spotify-api-base.hook";
 
 export interface SearchApiParams {
   query: string;
@@ -17,31 +16,14 @@ export function useSpotifySearch<Data = unknown>(): [
   (props: SearchApiParams) => void,
   ApiHookReturnType<Data>
 ] {
-  const [loading, setLoading] = useState(false);
-  const response = useRef<SpotifyResponse<Data>>({
-    content: null,
-    error: null,
-  });
-  const { tokenData } = useSpotifyState();
-  const token = tokenData?.token || null;
+  const [baseRequest, state] = useSpotifyApiBase<Data>("GET");
 
-  const lazyRequest = useCallback(
-    (props: SearchApiParams) => {
-      if (!token) {
-        console.warn("useSpotifySearch: Spotify token is missing");
-        return;
-      }
-
-      const url = propsToUrl(props);
-      setLoading(true);
-      apiGetRequest<Data>(url, token)
-        .then((apiResponse) => (response.current = apiResponse))
-        .finally(() => setLoading(false));
-    },
-    [token]
+  const request = useCallback(
+    (props: SearchApiParams) => baseRequest(propsToUrl(props)),
+    [baseRequest]
   );
 
-  return [lazyRequest, { ...response.current, loading }];
+  return [request, state];
 }
 
 function propsToUrl(props: SearchApiParams): string {

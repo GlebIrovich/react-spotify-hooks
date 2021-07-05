@@ -20,12 +20,6 @@ const Component = ({ configs }: { configs: AddItemToQueueParams }) => {
 };
 
 describe("useSpotifySearch", () => {
-  it("should do nothing if token is not provided", () => {
-    mockUseSpotifyState({ tokenData: undefined } as any);
-    const { container } = render(<Component configs={configs} />);
-    expect(container).toMatchInlineSnapshot(`<div />`);
-  });
-
   it("should return results if request was successful", async () => {
     const token = "MY_TOKEN";
     mockUseSpotifyState({ tokenData: { token } } as any);
@@ -34,23 +28,13 @@ describe("useSpotifySearch", () => {
       content: { data: "DATA" },
       error: null,
     });
-    const { container, findByTestId } = render(
+    const { findByTestId } = render(
       <Component configs={{ ...configs, device: "123" }} />
     );
 
     const expectedUrl =
       "https://api.spotify.com/v1/me/player/queue?uri=URI&device=123";
-    expect(fetchMock).toBeCalledWith(expectedUrl, token);
+    expect(fetchMock).toBeCalledWith(expectedUrl, token, undefined);
     await findByTestId("content");
-
-    expect(container).toMatchInlineSnapshot(`
-<div>
-  <div
-    data-testid="content"
-  >
-    {"data":"DATA"}
-  </div>
-</div>
-`);
   });
 });

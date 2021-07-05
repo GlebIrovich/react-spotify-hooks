@@ -18,12 +18,6 @@ const Component = ({ configs }: { configs: SearchApiParams }) => {
 };
 
 describe("useSpotifySearch", () => {
-  it("should do nothing if token is not provided", () => {
-    mockUseSpotifyState({ tokenData: undefined } as any);
-    const { container } = render(<Component configs={configs} />);
-    expect(container).toMatchInlineSnapshot(`<div />`);
-  });
-
   it("should return results if request was successful", async () => {
     const token = "MY_TOKEN";
     mockUseSpotifyState({ tokenData: { token } } as any);
@@ -31,7 +25,7 @@ describe("useSpotifySearch", () => {
       content: { data: "DATA" },
       error: null,
     });
-    const { container, findByTestId } = render(
+    const { findByTestId } = render(
       <Component
         configs={{
           ...configs,
@@ -47,15 +41,5 @@ describe("useSpotifySearch", () => {
       "https://api.spotify.com/v1/search?q=QUERY&type=album&market=from_token&limit=10&offset=10&include_external=true";
     expect(fetchMock).toBeCalledWith(expectedUrl, token);
     await findByTestId("content");
-
-    expect(container).toMatchInlineSnapshot(`
-<div>
-  <div
-    data-testid="content"
-  >
-    {"data":"DATA"}
-  </div>
-</div>
-`);
   });
 });
