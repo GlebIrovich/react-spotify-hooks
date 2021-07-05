@@ -16,11 +16,6 @@ const StateConsumer = () => {
       <p data-testid="validUntil">
         {state.tokenData?.validUntil?.toISOString() || "NO_VALID_UNTIL"}
       </p>
-      <p data-testid="redirectUri">{state.configs.redirectUri}</p>
-      <p data-testid="scopes">
-        {state.configs.scopes?.join("*") || "NO_SCOPES"}
-      </p>
-      <p data-testid="clientId">{state.configs.clientId}</p>
     </>
   );
 };
@@ -30,14 +25,11 @@ jest.setSystemTime(0);
 beforeEach(jest.resetAllMocks);
 describe("SpotifyContextProvider", () => {
   it("should have initial state", () => {
-    const { testProps } = renderWithContext(<StateConsumer />, {});
+    renderWithContext(<StateConsumer />);
 
     [
       ["token", "NO_TOKEN"],
       ["validUntil", "NO_VALID_UNTIL"],
-      ["redirectUri", testProps.configs.redirectUri],
-      ["scopes", testProps.configs.scopes?.join("*")],
-      ["clientId", testProps.configs.clientId],
     ].forEach(([id, expectedValue]) => {
       expect(screen.getByTestId(id as string).innerHTML).toEqual(expectedValue);
     });
@@ -61,34 +53,42 @@ describe("SpotifyContextProvider", () => {
     );
   });
 
-  it("should not auto detect token is auto detection is disabled", async () => {
+  it("should invoke token callback if provided", async () => {
     const token = "MY_TOKEN";
     const expiresIn = 1000;
+    jest.setSystemTime(0);
     jest.spyOn(window, "location", "get").mockReturnValue({
       hash: `#access_token=${token}&expires_in=${expiresIn}`,
     } as any);
 
+    const handleTokenObtainedMock = jest.fn();
     renderWithContext(<StateConsumer />, {
-      tokenAutoDetect: false,
+      onTokenObtained: handleTokenObtainedMock,
     });
 
-    expect((await screen.findByTestId("token")).innerHTML).toEqual("NO_TOKEN");
-    expect((await screen.findByTestId("validUntil")).innerHTML).toEqual(
-      "NO_VALID_UNTIL"
-    );
+    const expectedDate = new Date(Date.now() + expiresIn * 1000);
+    expect(handleTokenObtainedMock).toBeCalledWith({
+      token,
+      validUntil: expectedDate,
+    });
   });
 
   it("should throw an error unsupported action type is dispatched", async () => {
+    const token = "MY_TOKEN";
+    const expiresIn = 1000;
     jest.spyOn(console, "error").mockReturnValue();
+    jest.spyOn(window, "location", "get").mockReturnValue({
+      hash: `#access_token=${token}&expires_in=${expiresIn}`,
+    } as any);
     const Component = () => {
       const dispatch = useSpotifyDispatch();
       dispatch({ type: "RANDOM" } as any);
       return null;
     };
 
-    expect(() =>
-      renderWithContext(<Component />, { tokenAutoDetect: false })
-    ).toThrow("unhandled action type");
+    expect(() => renderWithContext(<Component />)).toThrow(
+      "unhandled action type"
+    );
   });
 });
 

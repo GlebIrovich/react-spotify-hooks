@@ -1,8 +1,7 @@
-import { ApiHookReturnType, SpotifyResponse } from "../../../types";
-import { useCallback, useRef, useState } from "react";
-import { useSpotifyState } from "../../context/spotify.context";
-import { apiGetRequest } from "../../helpers/spotify.api";
+import { ApiHookReturnType } from "../../../types";
+import { useCallback } from "react";
 import { SPOTIFY_API_BASE } from "../../../constants";
+import { useSpotifyApiBase } from "../../helpers/use-spotify-api-base.hook";
 
 export interface CurrentTrackParams {
   market?: string;
@@ -13,31 +12,14 @@ export function useCurrentTrack<Data = unknown>(): [
   (props: CurrentTrackParams) => void,
   ApiHookReturnType<Data>
 ] {
-  const [loading, setLoading] = useState(false);
-  const response = useRef<SpotifyResponse<Data>>({
-    content: null,
-    error: null,
-  });
-  const { tokenData } = useSpotifyState();
-  const token = tokenData?.token || null;
+  const [baseRequest, state] = useSpotifyApiBase<Data>("GET");
 
-  const lazyRequest = useCallback(
-    (props: CurrentTrackParams) => {
-      if (!token) {
-        console.warn("useCurrentTrack: Spotify token is missing");
-        return;
-      }
-
-      const url = propsToUrl(props);
-      setLoading(true);
-      apiGetRequest<Data>(url, token)
-        .then((apiResponse) => (response.current = apiResponse))
-        .finally(() => setLoading(false));
-    },
-    [token]
+  const request = useCallback(
+    (props: CurrentTrackParams) => baseRequest(propsToUrl(props)),
+    [baseRequest]
   );
 
-  return [lazyRequest, { ...response.current, loading }];
+  return [request, state];
 }
 
 function propsToUrl(props: CurrentTrackParams): string {

@@ -14,13 +14,6 @@ const Component = ({ configs }: { configs: CurrentTrackParams }) => {
 };
 
 describe("useCurrentTrack", () => {
-  it("should do nothing if token is not provided", () => {
-    mockUseSpotifyState({ tokenData: undefined } as any);
-
-    const { container } = render(<Component configs={configs} />);
-    expect(container).toMatchInlineSnapshot(`<div />`);
-  });
-
   it("should return results if request was successful", async () => {
     const token = "MY_TOKEN";
 
@@ -30,7 +23,7 @@ describe("useCurrentTrack", () => {
       error: null,
     });
 
-    const { container, findByTestId } = render(
+    const { findByTestId } = render(
       <Component
         configs={{
           ...configs,
@@ -45,15 +38,5 @@ describe("useCurrentTrack", () => {
 
     expect(fetchMock).toBeCalledWith(expectedUrl, token);
     await findByTestId("content");
-
-    expect(container).toMatchInlineSnapshot(`
-<div>
-  <div
-    data-testid="content"
-  >
-    {"data":"DATA"}
-  </div>
-</div>
-`);
   });
 });

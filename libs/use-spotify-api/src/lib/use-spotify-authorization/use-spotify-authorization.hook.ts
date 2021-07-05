@@ -1,4 +1,3 @@
-import { SpotifyConfigs, useSpotifyState } from "../context/spotify.context";
 import { SPOTIFY_ACCOUNT_BASE } from "../../constants";
 
 interface AuthorizationConfigs {
@@ -10,24 +9,32 @@ interface AuthorizationConfigs {
   show_dialog?: boolean;
 }
 
-export function useSpotifyAuthorization() {
-  const { configs } = useSpotifyState();
-
-  return generateAuthUrl(configs);
+export interface AuthorizationParams {
+  clientId: string;
+  redirectUri: string;
+  scopes?: string[];
+  showDialog?: boolean;
+  state?: string;
 }
 
-function generateAuthUrl(configs: SpotifyConfigs) {
-  const authConfigs = generateConfigs(configs);
-  const params = new URLSearchParams(Object.entries(authConfigs));
-
-  return `${SPOTIFY_ACCOUNT_BASE}/authorize?${params.toString()}`;
+export function useSpotifyAuthorization(params: AuthorizationParams) {
+  return generateAuthUrl(params);
 }
 
-function generateConfigs(configs: SpotifyConfigs): AuthorizationConfigs {
+function generateAuthUrl(params: AuthorizationParams) {
+  const authConfigs = generateConfigs(params);
+  const urlParams = new URLSearchParams(Object.entries(authConfigs));
+
+  return `${SPOTIFY_ACCOUNT_BASE}/authorize?${urlParams.toString()}`;
+}
+
+function generateConfigs(params: AuthorizationParams): AuthorizationConfigs {
   return {
-    client_id: configs.clientId,
+    client_id: params.clientId,
     response_type: "token",
-    redirect_uri: configs.redirectUri,
-    ...(configs.scopes ? { scope: configs.scopes.join(" ") } : {}),
+    redirect_uri: params.redirectUri,
+    ...(params.scopes ? { scope: params.scopes.join(" ") } : {}),
+    ...(params.state ? { state: params.state } : {}),
+    ...(params.showDialog ? { show_dialog: params.showDialog } : {}),
   };
 }

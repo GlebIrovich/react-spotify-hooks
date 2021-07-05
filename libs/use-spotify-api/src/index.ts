@@ -5,5 +5,6 @@ export * from "./lib/player-api/use-add-item-to-queue/use-add-item-to-queue.hook
 export {
   SpotifyContextProvider,
   useSpotifyState,
+  useSetSpotifyToken,
 } from "./lib/context/spotify.context";
 export { ApiHookReturnType } from "./types";
